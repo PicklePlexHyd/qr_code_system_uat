@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Membership Pass</title>
+    <title>Pickleplex Membership Pass</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,6 +24,13 @@
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header img {
+            width: 50px;
+            margin-right: 10px;
         }
         .details {
             text-align: left;
@@ -32,27 +39,45 @@
         .details p {
             margin: 5px 0;
         }
-        .entries {
-            font-size: 18px;
-            color: #007BFF;
-            font-weight: bold;
+        .perks {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .perks li {
+            margin: 5px 0;
         }
         .footer {
+            margin-top: 20px;
+        }
+        .qr-code {
+            width: 100px;
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="header">Membership Pass</div>
+        <div class="header">
+            <img src="{{ url_for('static', filename='onwhite_logo-modified.png') }}" alt="Pickleplex Logo">
+            Pickleplex Membership Pass
+        </div>
         <div class="details">
             <p><strong>Name:</strong> {{ member.name }}</p>
             <p><strong>Membership Type:</strong> {{ member.membership_type }}</p>
-            <p><strong>Validity:</strong> {{ member.validity }}</p>
-            {% if member.membership_type in ["Xpress Pass", "Season Pass"] %}
-                <p><strong>Entries Left:</strong> <span class="entries">{{ member.entries_left }}</span></p>
+            <p><strong>Validity:</strong> {{ start_date }} - {{ member.validity }}</p>
+            {% if member.entries_left is not none %}
+                <p><strong>Entries Left:</strong> {{ member.entries_left }}</p>
             {% endif %}
         </div>
+        <div class="perks">
+            <h3>Perks:</h3>
+            <ul>
+                {% for perk in perks %}
+                    <li>{{ perk }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <img src="{{ url_for('static', filename=member.qr_code.split('static/')[1]) }}" alt="QR Code" class="qr-code">
         <div class="footer">
             <a href="/" style="text-decoration: none; color: #007BFF;">Back to Home</a>
         </div>

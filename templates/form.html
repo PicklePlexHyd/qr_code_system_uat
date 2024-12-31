@@ -3,28 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate Membership QR Code</title>
+    <title>Generate Membership</title>
 </head>
 <body>
-    <h1>Generate Membership QR Code</h1>
+    <h1>Generate Membership</h1>
     <form action="/generate" method="POST">
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
+        <input type="text" id="name" name="name" required><br>
 
         <label for="membership_type">Membership Type:</label>
         <select id="membership_type" name="membership_type" required>
-            <option value="Membership">Membership</option>
             <option value="Xpress Pass">Xpress Pass</option>
             <option value="Season Pass">Season Pass</option>
-        </select><br><br>
+            <option value="Membership">Membership</option>
+        </select><br>
 
-        <label for="validity">Validity (YYYY-MM-DD):</label>
-        <input type="date" id="validity" name="validity" required><br><br>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required><br>
 
-        <label for="entries_left">Entries Left (Optional):</label>
-        <input type="number" id="entries_left" name="entries_left"><br><br>
-
-        <button type="submit">Generate QR Code</button>
+        <input type="submit" value="Generate Membership">
     </form>
 </body>
 </html>
