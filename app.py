@@ -127,4 +127,5 @@ def show_pass(membership_id):
         return "Internal Server Error", 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
