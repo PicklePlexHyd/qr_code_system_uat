@@ -33,20 +33,26 @@ def generate_membership():
         if membership_type == "Xpress Pass":
             entries_left = 8
             perks = [
-                "Carry forward unused slots for up to 15 more days",
+                "Book up to 8 slots a month.",
+                "Carry forward unused slots for up to 15 more days.",
+                "24 hrs advance booking for weekend.",
             ]
         elif membership_type == "Season Pass":
             entries_left = 24
             perks = [
-                "Bring one friend per month at a discounted rate (20%)",
-                "Carry forward unused slots for up to 15 more days",
+                "24 slots for 90 days.",
+                "Bring 1 friend per month at a discounted rate (20%).",
+                "Carry forward unused slots for up to 15 more days.",
+                "24 hrs advance booking for weekend.",
             ]
         elif membership_type == "Membership":
             perks = [
-                "20% discount for individual court bookings",
-                "1-2 free guest passes per month",
-                "Loyalty points for free sessions or paddle rentals",
-                "One free session in the member's birthday month",
+                "20% discount for individual court bookings.",
+                "2 free guest passes per month.",
+                "Free Team Listing for Tournaments.",
+                "Access to Membership Exclusive Events (Social Mixers, Sundowners, etc.).",
+                "Loyalty points for free sessions or paddle rentals.",
+                "One free session in the member's birthday month.",
             ]
 
         # Add member to the database
@@ -94,26 +100,32 @@ def show_pass(membership_id):
         # Determine perks based on membership type
         perks = []
         if member.membership_type == "Xpress Pass":
-            perks = ["Book upto 8 slots a month.","Carry forward unused slots for up to 15 more days","24 hrs advance booking for weekend"]
+            perks = ["Book up to 8 slots a month.", "Carry forward unused slots for up to 15 more days.", "24 hrs advance booking for weekend."]
         elif member.membership_type == "Season Pass":
             perks = [
                 "24 slots for 90 days.",
-                "Bring 1 friend per month at a discounted rate (20%)",
-                "Carry forward unused slots for up to 15 more days",
-                "24 hrs advance booking for weekend"
+                "Bring 1 friend per month at a discounted rate (20%).",
+                "Carry forward unused slots for up to 15 more days.",
+                "24 hrs advance booking for weekend.",
             ]
         elif member.membership_type == "Membership":
             perks = [
-                "20% discount for individual court bookings",
-                "2 free guest passes per month",
+                "20% discount for individual court bookings.",
+                "2 free guest passes per month.",
                 "Free Team Listing for Tournaments.",
-                "Access to Membership Exclusive Events (Social Mixers, Sundowners, etc.)",
-                "Loyalty points for free sessions or paddle rentals",
-                "One free session in the member's birthday month",
+                "Access to Membership Exclusive Events (Social Mixers, Sundowners, etc.).",
+                "Loyalty points for free sessions or paddle rentals.",
+                "One free session in the member's birthday month.",
             ]
 
         # Calculate start date from validity (90 days back)
         start_date = member.validity - timedelta(days=90)
+
+        # Decrement entries left for Xpress Pass and Season Pass
+        if member.membership_type in ["Xpress Pass", "Season Pass"]:
+            if member.entries_left is not None and member.entries_left > 0:
+                member.entries_left -= 1
+                session.commit()
 
         # Render the pass template
         return render_template(
