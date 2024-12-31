@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Pass</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .details {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .entries {
+            font-size: 18px;
+            color: #007BFF;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">Membership Pass</div>
+        <div class="details">
+            <p><strong>Name:</strong> {{ member.name }}</p>
+            <p><strong>Membership Type:</strong> {{ member.membership_type }}</p>
+            <p><strong>Validity:</strong> {{ member.validity }}</p>
+            {% if member.membership_type in ["Xpress Pass", "Season Pass"] %}
+                <p><strong>Entries Left:</strong> <span class="entries">{{ member.entries_left }}</span></p>
+            {% endif %}
+        </div>
+        <div class="footer">
+            <a href="/" style="text-decoration: none; color: #007BFF;">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

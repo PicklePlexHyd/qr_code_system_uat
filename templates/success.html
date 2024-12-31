@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generated</title>
+</head>
+<body>
+    <h1>QR Code Generation Status</h1>
+    <p>{{ qr_status }}</p>
+
+    {% if qr_code_url %}
+        <p>Here is your QR code:</p>
+        <img src="{{ qr_code_url }}" alt="Generated QR Code">
+    {% else %}
+        <p>QR code could not be generated.</p>
+    {% endif %}
+
+    <a href="/">Generate Another QR Code</a>
+</body>
+</html>
