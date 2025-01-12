@@ -101,12 +101,15 @@ def admin_scan():
         return redirect(url_for("login"))
 
     if request.method == 'POST':
-        member_name = request.form.get("member_name")  # Fetch the name from the form
+        member_name = request.form.get("member_name")
+        print(f"Received Member Name: {member_name}")
         try:
-            # Retrieve member details using name
-            member = db_session.query(Membership).filter_by(name=member_name).first()
+            # Case-insensitive query
+            member = db_session.query(Membership).filter(Membership.name.ilike(member_name)).first()
+            print(f"Queried Member: {member}")
 
             if not member:
+                print("No member found with the provided name.")
                 return render_template("error.html", message="Invalid Member Name")
 
             # Handle Xpress Pass and Season Pass logic
@@ -114,12 +117,14 @@ def admin_scan():
                 if member.entries_left > 0:
                     member.entries_left -= 1
                     db_session.commit()
+                    print(f"Updated Entries Left: {member.entries_left}")
                     return render_template(
                         "scan_success.html",
                         member=member,
                         message="Entry successfully expired!"
                     )
                 else:
+                    print("No entries left for the member.")
                     return render_template("error.html", message="No entries left!")
             return render_template("scan_success.html", member=member, message="Membership scanned successfully!")
         except Exception as e:
@@ -127,6 +132,7 @@ def admin_scan():
             return render_template("error.html", message="Error during scan!")
 
     return render_template("admin_scan.html")
+
 
 
 # Public route to display membership pass
