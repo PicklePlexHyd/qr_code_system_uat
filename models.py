@@ -29,7 +29,7 @@ class ScanHistory(Base):
     membership = relationship('Membership', back_populates='scan_history')
 
 # Initialize the database
-engine = create_engine('sqlite:///membership.db')
+engine = create_engine('sqlite:///app/membership.db')
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
