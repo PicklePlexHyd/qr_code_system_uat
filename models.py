@@ -17,6 +17,14 @@ class Membership(Base):
 
     scan_history = relationship('ScanHistory', back_populates='membership')
 
+    def __repr__(self):
+        return (
+            f"<Membership(id={self.id}, name={self.name}, "
+            f"membership_type={self.membership_type}, validity={self.validity}, "
+            f"entries_left={self.entries_left}, qr_code={self.qr_code})>"
+        )
+
+
 # ScanHistory Table
 class ScanHistory(Base):
     __tablename__ = 'scan_history'
