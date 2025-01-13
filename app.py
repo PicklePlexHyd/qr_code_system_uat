@@ -9,8 +9,8 @@ app.secret_key = "supersecretkey"
 BASE_URL = os.getenv("BASE_URL", "https://pickplex-app-9f5753935b75.herokuapp.com")
 
 # Dummy admin credentials
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "password123"
+ADMIN_USERNAME = "PicklePlexAdmin"
+ADMIN_PASSWORD = "PlexAdmin@123"
 
 @app.route('/')
 def home():
