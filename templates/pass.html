@@ -50,7 +50,7 @@
             margin-top: 20px;
         }
         .qr-code {
-            width: 100px;
+            width: 150px;
             margin-top: 20px;
         }
     </style>
@@ -72,12 +72,19 @@
         <div class="perks">
             <h3>Perks:</h3>
             <ul>
-                {% for perk in perks %}
-                    <li>{{ perk }}</li>
-                {% endfor %}
+                {% if perks %}
+                    {% for perk in perks %}
+                        <li>{{ perk }}</li>
+                    {% endfor %}
+                {% else %}
+                    <li>No perks available for this membership type.</li>
+                {% endif %}
             </ul>
         </div>
-        <img src="{{ url_for('static', filename=member.qr_code.split('static/')[1]) }}" alt="QR Code" class="qr-code">
+        <img 
+            src="{{ url_for('static', filename=member.qr_code.split('static/')[1]) }}" 
+            alt="QR Code" 
+            class="qr-code">
         <div class="footer">
             <a href="/" style="text-decoration: none; color: #007BFF;">Back to Home</a>
         </div>

@@ -60,9 +60,17 @@ def generate_membership():
                 return jsonify({"error": "Missing required fields"}), 400
 
             start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
-            end_date = start_date + timedelta(days=90)
+            end_date = start_date + timedelta(days=30)
 
-            entries_left = 8 if membership_type == "Xpress Pass" else 24 if membership_type == "Season Pass" else None
+            # Assign entries based on membership type
+            if membership_type == "Morning Pass":
+                entries_left = 30
+            elif membership_type == "Xpress Pass":
+                entries_left = 8
+            elif membership_type == "Monthly Pass":
+                entries_left = 16
+            else:
+                entries_left = None
 
             new_member = Membership(
                 name=name,
@@ -112,8 +120,8 @@ def admin_scan():
                 print("No member found with the provided name.")
                 return render_template("error.html", message="Invalid Member Name")
 
-            # Handle Xpress Pass and Season Pass logic
-            if member.membership_type in ["Xpress Pass", "Season Pass"]:
+            # Handle logic for each membership type
+            if member.membership_type in ["Morning Pass", "Xpress Pass", "Monthly Pass"]:
                 if member.entries_left > 0:
                     member.entries_left -= 1
                     db_session.commit()
@@ -133,8 +141,6 @@ def admin_scan():
 
     return render_template("admin_scan.html")
 
-
-
 # Public route to display membership pass
 @app.route('/pass/<int:membership_id>')
 def show_pass(membership_id):
@@ -144,23 +150,25 @@ def show_pass(membership_id):
             return render_template("error.html", message="Invalid Membership")
 
         perks = []
-        if member.membership_type == "Xpress Pass":
-            perks = ["Book up to 8 slots a month.", "Carry forward unused slots for up to 15 more days."]
-        elif member.membership_type == "Season Pass":
+        if member.membership_type == "Morning Pass":
             perks = [
-                "24 slots for 90 days.",
-                "Bring 1 friend per month at a discounted rate (20%).",
-                "Carry forward unused slots for up to 15 more days."
+                "Free 1-hour slot daily (7 AM - 11 AM), including weekends!",
+                "Paddles included!"
             ]
-        elif member.membership_type == "Membership":
+        elif member.membership_type == "Xpress Pass":
             perks = [
-                "20% discount for individual court bookings.",
-                "2 free guest passes per month.",
-                "Loyalty points for free sessions or paddle rentals.",
-                "One free session in the member's birthday month."
+                "4 hours (8 slots) per month.",
+                "Carry forward unused slots for up to 15 days if the pass is still valid.",
+                "Redeem up to 2 slots per day!"
+            ]
+        elif member.membership_type == "Monthly Pass":
+            perks = [
+                "8 hours (16 slots) per month.",
+                "Carry forward unused slots for up to 15 days if the pass is still valid.",
+                "Redeem up to 4 slots per day!"
             ]
 
-        start_date = member.validity - timedelta(days=90)
+        start_date = member.validity - timedelta(days=30)
         return render_template("pass.html", member=member, perks=perks, start_date=start_date)
     except Exception as e:
         print(f"Error displaying pass: {e}")

@@ -11,6 +11,20 @@
     <p><strong>Membership Type:</strong> {{ member.membership_type }}</p>
     <p><strong>Validity:</strong> {{ member.validity }}</p>
     <p><strong>Entries Left:</strong> {{ member.entries_left }}</p>
+
+    <!-- QR Code -->
+    <p><strong>QR Code:</strong></p>
+    <img src="{{ member.qr_code }}" alt="QR Code for {{ member.name }}" style="width: 200px; height: auto;">
+
+    <!-- Perks Section -->
+    <h2>Perks</h2>
+    <ul>
+        {% for perk in perks %}
+            <li>{{ perk }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Navigation -->
     <a href="/">Back to Home</a>
 </body>
 </html>
