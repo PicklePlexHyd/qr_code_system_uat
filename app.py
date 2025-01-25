@@ -1,3 +1,8 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+from email.utils import formataddr
 from flask import Flask, request, render_template, jsonify, redirect, url_for, session
 from datetime import datetime, timedelta
 from models import session as db_session, Membership
@@ -8,9 +13,36 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"
 BASE_URL = os.getenv("BASE_URL", "https://pickplex-app-9f5753935b75.herokuapp.com")
 
-# Dummy admin credentials
+# Admin credentials
 ADMIN_USERNAME = "PicklePlexAdmin"
 ADMIN_PASSWORD = "PlexAdmin@123"
+
+# Email credentials
+EMAIL_ADDRESS = "pickleplexhyd@gmail.com"  # Update with your email
+EMAIL_PASSWORD = "enpt akwm mliz gfte"  # Use app password
+
+# Function to send email
+def send_email(to_email, subject, body, qr_path=None):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = formataddr(("Pickleplex", EMAIL_ADDRESS))
+        msg['To'] = to_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'html'))
+
+        # Attach QR code if available
+        if qr_path:
+            with open(qr_path, 'rb') as f:
+                qr_image = MIMEImage(f.read(), name=os.path.basename(qr_path))
+                msg.attach(qr_image)
+
+        # Connect to SMTP server and send email
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            smtp.sendmail(EMAIL_ADDRESS, to_email, msg.as_string())
+            print("Email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
 
 @app.route('/')
 def home():
@@ -34,14 +66,12 @@ def logout():
     session.pop("admin", None)
     return redirect(url_for("login"))
 
-# Admin dashboard to choose functionality
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if "admin" not in session:
         return redirect(url_for("login"))
     return render_template("admin_dashboard.html")
 
-# Membership generation route (admin only)
 @app.route('/generate', methods=['GET', 'POST'])
 def generate_membership():
     if "admin" not in session:
@@ -53,27 +83,43 @@ def generate_membership():
     if request.method == 'POST':
         try:
             name = request.form.get("name")
+            email = request.form.get("email")
             membership_type = request.form.get("membership_type")
             start_date_str = request.form.get("start_date")
 
-            if not name or not membership_type or not start_date_str:
+            if not name or not email or not membership_type or not start_date_str:
                 return jsonify({"error": "Missing required fields"}), 400
 
             start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
             end_date = start_date + timedelta(days=30)
 
-            # Assign entries based on membership type
             if membership_type == "Morning Pass":
                 entries_left = 30
+                perks = [
+                    "Free 1-hour slot daily (7 AM - 11 AM), including weekends!",
+                    "Paddles included!"
+                ]
             elif membership_type == "Xpress Pass":
                 entries_left = 8
+                perks = [
+                    "4 hours (8 slots) per month.",
+                    "Carry forward unused slots for up to 15 days if the pass is still valid.",
+                    "Redeem up to 2 slots per day!"
+                ]
             elif membership_type == "Monthly Pass":
                 entries_left = 16
+                perks = [
+                    "8 hours (16 slots) per month.",
+                    "Carry forward unused slots for up to 15 days if the pass is still valid.",
+                    "Redeem up to 4 slots per day!"
+                ]
             else:
                 entries_left = None
+                perks = []
 
             new_member = Membership(
                 name=name,
+                email=email,
                 membership_type=membership_type,
                 validity=end_date,
                 entries_left=entries_left,
@@ -93,55 +139,29 @@ def generate_membership():
             new_member.qr_code = qr_code_path
             db_session.commit()
 
+            subject = "Your Pickleplex Membership Details"
+            body = f"""
+            <h2>Welcome to Pickleplex, {name}!</h2>
+            <p>Thank you for purchasing the <strong>{membership_type}</strong>.</p>
+            <p><strong>Validity:</strong> {start_date} to {end_date}</p>
+            <p><strong>Entries Left:</strong> {entries_left}</p>
+            <h3>Perks:</h3>
+            <ul>
+                {''.join(f'<li>{perk}</li>' for perk in perks)}
+            </ul>
+            <p>You can access your membership pass <a href="{qr_link}">here</a>.</p>
+            """
+            send_email(email, subject, body, qr_path=qr_code_path)
+
             return render_template(
                 "success.html",
                 qr_code_url=f"/static/qr_codes/{qr_code_filename}",
-                qr_status="QR code generated successfully!"
+                qr_status="QR code generated and email sent successfully!"
             )
         except Exception as e:
             print(f"Error generating membership: {e}")
             return "Internal Server Error", 500
 
-# Admin route to scan and expire entries
-@app.route('/admin/scan', methods=['GET', 'POST'])
-def admin_scan():
-    if "admin" not in session:
-        return redirect(url_for("login"))
-
-    if request.method == 'POST':
-        member_name = request.form.get("member_name")
-        print(f"Received Member Name: {member_name}")
-        try:
-            # Case-insensitive query
-            member = db_session.query(Membership).filter(Membership.name.ilike(member_name)).first()
-            print(f"Queried Member: {member}")
-
-            if not member:
-                print("No member found with the provided name.")
-                return render_template("error.html", message="Invalid Member Name")
-
-            # Handle logic for each membership type
-            if member.membership_type in ["Morning Pass", "Xpress Pass", "Monthly Pass"]:
-                if member.entries_left > 0:
-                    member.entries_left -= 1
-                    db_session.commit()
-                    print(f"Updated Entries Left: {member.entries_left}")
-                    return render_template(
-                        "scan_success.html",
-                        member=member,
-                        message="Entry successfully expired!"
-                    )
-                else:
-                    print("No entries left for the member.")
-                    return render_template("error.html", message="No entries left!")
-            return render_template("scan_success.html", member=member, message="Membership scanned successfully!")
-        except Exception as e:
-            print(f"Error during scan: {e}")
-            return render_template("error.html", message="Error during scan!")
-
-    return render_template("admin_scan.html")
-
-# Public route to display membership pass
 @app.route('/pass/<int:membership_id>')
 def show_pass(membership_id):
     try:
@@ -175,5 +195,5 @@ def show_pass(membership_id):
         return "Internal Server Error", 500
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5001))
+    port = int(os.environ.get("PORT", 5002))
     app.run(host="0.0.0.0", port=port)

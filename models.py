@@ -11,6 +11,8 @@ class Membership(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     membership_type = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+    # Removed phone_number column
     validity = Column(Date, nullable=False)
     entries_left = Column(Integer, nullable=True)
     qr_code = Column(String, nullable=False)
@@ -20,8 +22,8 @@ class Membership(Base):
     def __repr__(self):
         return (
             f"<Membership(id={self.id}, name={self.name}, "
-            f"membership_type={self.membership_type}, validity={self.validity}, "
-            f"entries_left={self.entries_left}, qr_code={self.qr_code})>"
+            f"membership_type={self.membership_type}, "
+            f"validity={self.validity}, entries_left={self.entries_left}, qr_code={self.qr_code})>"
         )
 
 
@@ -34,7 +36,7 @@ class ScanHistory(Base):
 
     membership = relationship('Membership', back_populates='scan_history')
 
-# Manually configure database URL
+# Database Configuration
 DATABASE_URL = "postgresql://u5tcjrchmc5fa3:p24192f96879635b1330d21133a01a2d3777838f27821f755df3849609c9889e1@cfls9h51f4i86c.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/da9iac6pkpkurm"
 
 # Initialize the database

@@ -10,11 +10,12 @@
     <form action="/generate" method="POST">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required><br><br>
-
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
         <label for="membership_type">Membership Type:</label>
         <select id="membership_type" name="membership_type" required>
             <option value="Xpress Pass">Xpress Pass</option>
-            <option value="Season Pass">Season Pass</option>
+            <option value="Monthly Pass">Monthly Pass</option>
             <option value="Morning Pass">Morning Pass</option>
         </select><br><br>
 
@@ -25,3 +26,4 @@
     </form>
 </body>
 </html>
+

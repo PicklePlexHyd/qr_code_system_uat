@@ -4,27 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .details {
+            margin-bottom: 20px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .qr-code {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .qr-code img {
+            max-width: 200px;
+            height: auto;
+        }
+        .perks {
+            margin-top: 20px;
+        }
+        .perks ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .navigation {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .navigation a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Member Details</h1>
-    <p><strong>Name:</strong> {{ member.name }}</p>
-    <p><strong>Membership Type:</strong> {{ member.membership_type }}</p>
-    <p><strong>Validity:</strong> {{ member.validity }}</p>
-    <p><strong>Entries Left:</strong> {{ member.entries_left }}</p>
+    <div class="container">
+        <h1>Member Details</h1>
+        <div class="details">
+            <p><strong>Name:</strong> {{ member.name }}</p>
+            <p><strong>Membership Type:</strong> {{ member.membership_type }}</p>
+            <p><strong>Validity:</strong> {{ member.validity }}</p>
+            <p><strong>Entries Left:</strong> {{ member.entries_left }}</p>
+        </div>
 
-    <!-- QR Code -->
-    <p><strong>QR Code:</strong></p>
-    <img src="{{ member.qr_code }}" alt="QR Code for {{ member.name }}" style="width: 200px; height: auto;">
+        <!-- QR Code -->
+        <div class="qr-code">
+            <p><strong>QR Code:</strong></p>
+            <img src="{{ url_for('static', filename=member.qr_code.split('static/')[1]) }}" alt="QR Code for {{ member.name }}">
+        </div>
 
-    <!-- Perks Section -->
-    <h2>Perks</h2>
-    <ul>
-        {% for perk in perks %}
-            <li>{{ perk }}</li>
-        {% endfor %}
-    </ul>
+        <!-- Perks Section -->
+        <div class="perks">
+            <h2>Perks</h2>
+            <ul>
+                {% for perk in perks %}
+                    <li>{{ perk }}</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-    <!-- Navigation -->
-    <a href="/">Back to Home</a>
+        <!-- Navigation -->
+        <div class="navigation">
+            <a href="/">Back to Home</a>
+        </div>
+    </div>
 </body>
 </html>
