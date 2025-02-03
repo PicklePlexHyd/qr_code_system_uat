@@ -4,26 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generate Membership</title>
+    <style>
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
     <h1>Generate Membership</h1>
-    <form action="/generate" method="POST">
+    <form action="/generate" method="POST" id="membershipForm">
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
+        <input type="text" id="name" name="name" required>
+        <span class="error-message" id="nameError">Name must be at least 3 characters long.</span><br><br>
+
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
+        <input type="email" id="email" name="email" required>
+        <span class="error-message" id="emailError">Enter a valid email address.</span><br><br>
+
         <label for="membership_type">Membership Type:</label>
         <select id="membership_type" name="membership_type" required>
+            <option value="">Select a membership</option>
             <option value="Xpress Pass">Xpress Pass</option>
-            <option value="Monthly Pass">Monthly Pass</option>
+            <option value="Xpress Plus Pass">Xpress Plus Pass</option>
             <option value="Morning Pass">Morning Pass</option>
-        </select><br><br>
+        </select>
+        <span class="error-message" id="membershipError">Please select a membership type.</span><br><br>
 
         <label for="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" required><br><br>
+        <input type="date" id="start_date" name="start_date" required>
+        <span class="error-message" id="dateError">Start date cannot be in the past.</span><br><br>
 
         <input type="submit" value="Generate Membership">
     </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const nameInput = document.getElementById("name");
+            const emailInput = document.getElementById("email");
+            const membershipSelect = document.getElementById("membership_type");
+            const startDateInput = document.getElementById("start_date");
+            const form = document.getElementById("membershipForm");
+
+            const nameError = document.getElementById("nameError");
+            const emailError = document.getElementById("emailError");
+            const membershipError = document.getElementById("membershipError");
+            const dateError = document.getElementById("dateError");
+
+            // Restrict past dates
+            const today = new Date().toISOString().split("T")[0];
+            startDateInput.setAttribute("min", today);
+
+            form.addEventListener("submit", function(event) {
+                let isValid = true;
+
+                // Name Validation
+                if (nameInput.value.trim().length < 3) {
+                    nameError.style.display = "inline";
+                    isValid = false;
+                } else {
+                    nameError.style.display = "none";
+                }
+
+                // Email Validation (Strict TLD check)
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+                const invalidTLDs = ["co", "c"];
+                const emailParts = emailInput.value.trim().split(".");
+                const lastPart = emailParts[emailParts.length - 1];
+
+                if (!emailPattern.test(emailInput.value.trim()) || invalidTLDs.includes(lastPart)) {
+                    emailError.style.display = "inline";
+                    isValid = false;
+                } else {
+                    emailError.style.display = "none";
+                }
+
+                // Membership Type Validation
+                if (membershipSelect.value === "") {
+                    membershipError.style.display = "inline";
+                    isValid = false;
+                } else {
+                    membershipError.style.display = "none";
+                }
+
+                // Start Date Validation
+                const selectedDate = new Date(startDateInput.value);
+                const currentDate = new Date();
+                currentDate.setHours(0, 0, 0, 0); // Remove time for accurate comparison
+
+                if (selectedDate < currentDate) {
+                    dateError.style.display = "inline";
+                    isValid = false;
+                } else {
+                    dateError.style.display = "none";
+                }
+
+                if (!isValid) {
+                    event.preventDefault(); // Stop form submission
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
-

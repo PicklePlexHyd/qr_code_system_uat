@@ -53,6 +53,12 @@
             width: 150px;
             margin-top: 20px;
         }
+        .download-btn {
+            display: block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+        }
     </style>
 </head>
 <body>
@@ -62,7 +68,9 @@
             Pickleplex Pass
         </div>
         <div class="details">
+            <h1>Membership Pass</h1>
             <p><strong>Name:</strong> {{ member.name }}</p>
+            <p><strong>Membership ID:</strong> {{ member.id }}</p>
             <p><strong>Membership Type:</strong> {{ member.membership_type }}</p>
             <p><strong>Validity:</strong> {{ start_date }} - {{ member.validity }}</p>
             {% if member.entries_left is not none %}
@@ -85,9 +93,63 @@
             src="{{ url_for('static', filename=member.qr_code.split('static/')[1]) }}" 
             alt="QR Code" 
             class="qr-code">
+        <!-- Add a class to the footer and download buttons -->
         <div class="footer">
-            <a href="/" style="text-decoration: none; color: #007BFF;">Back to Home</a>
+            <a href="/" class="footer-link" style="text-decoration: none; color: #007BFF;">Back to Home</a>
         </div>
+        <a href="#" class="download-btn" id="download-image-btn">Download Pass Image</a>
+        <a href="#" class="download-btn" id="download-pdf-btn">Download Pass PDF</a>
     </div>
+
+    <!-- Include html2canvas and jsPDF libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Function to hide elements
+        function hideElements() {
+            const elementsToHide = document.querySelectorAll(".footer, .download-btn");
+            elementsToHide.forEach(element => {
+                element.style.display = "none";
+            });
+        }
+    
+        // Function to show elements
+        function showElements() {
+            const elementsToShow = document.querySelectorAll(".footer, .download-btn");
+            elementsToShow.forEach(element => {
+                element.style.display = "block";
+            });
+        }
+    
+        // Function to download the pass as an image
+        document.getElementById("download-image-btn").addEventListener("click", function (event) {
+            event.preventDefault();
+            hideElements(); // Hide elements before capturing
+            html2canvas(document.querySelector(".card")).then(canvas => {
+                const image = canvas.toDataURL("image/png");
+                const link = document.createElement("a");
+                link.href = image;
+                link.download = "membership_pass.png";
+                link.click();
+                showElements(); // Restore elements after capturing
+            });
+        });
+    
+        // Function to download the pass as a PDF
+        document.getElementById("download-pdf-btn").addEventListener("click", function (event) {
+            event.preventDefault();
+            hideElements(); // Hide elements before capturing
+            html2canvas(document.querySelector(".card")).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                const pdf = new jspdf.jsPDF("p", "mm", "a4");
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+                pdf.save("membership_pass.pdf");
+                showElements(); // Restore elements after capturing
+            });
+        });
+    </script>
 </body>
 </html>

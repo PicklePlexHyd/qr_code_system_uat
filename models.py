@@ -8,7 +8,7 @@ Base = declarative_base()
 # Membership Table
 class Membership(Base):
     __tablename__ = 'memberships'
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
     membership_type = Column(String, nullable=False)
     email = Column(String, nullable=False)
@@ -31,13 +31,13 @@ class Membership(Base):
 class ScanHistory(Base):
     __tablename__ = 'scan_history'
     id = Column(Integer, primary_key=True)
-    membership_id = Column(Integer, ForeignKey('memberships.id'))
+    membership_id = Column(String, ForeignKey('memberships.id'))
     scan_time = Column(DateTime, default=datetime.utcnow)
 
     membership = relationship('Membership', back_populates='scan_history')
 
 # Database Configuration
-DATABASE_URL = "postgresql://u5tcjrchmc5fa3:p24192f96879635b1330d21133a01a2d3777838f27821f755df3849609c9889e1@cfls9h51f4i86c.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/da9iac6pkpkurm"
+DATABASE_URL = "sqlite:////Users/rajkumardandu/Downloads/qr_code_system/membership.db"
 
 # Initialize the database
 engine = create_engine(DATABASE_URL, echo=True)  # echo=True enables SQL logging for debugging

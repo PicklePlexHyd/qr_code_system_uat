@@ -8,10 +8,14 @@
 <body>
     <h1>Admin: Scan Membership</h1>
     <form action="/admin/scan" method="POST">
-        <label for="member_name">Member Name:</label>
-        <input type="text" id="member_name" name="member_name" required>
+        <label for="membership_id">Membership Id:</label>
+        <input type="text" id="membership_id" name="membership_id" required>
         <input type="submit" value="Scan">
     </form>
+    <!-- Button to go to Expire Entries Page -->
+<form action="/admin/expire_entries" method="GET">
+    <button type="submit">Expire Entries</button>
+</form>
     <a href="/admin/dashboard">Back to Dashboard</a>
 </body>
 </html>
