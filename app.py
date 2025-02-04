@@ -53,7 +53,12 @@ else:
 SHEET_NAME = "PicklePlex Data"
 spreadsheet = client.open(SHEET_NAME)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///membership.db')  # Use SQLite locally, PostgreSQL on Heroku
+
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)  # Heroku fix
+
+SQLALCHEMY_DATABASE_URI = DATABASE_URL
 
 
 #Adding Membership Data to Excel Sheet 
