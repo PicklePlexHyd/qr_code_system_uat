@@ -301,7 +301,7 @@ def admin_scan():
 
     return render_template("admin_scan.html", member=member)
 
-@app.route('/pass/<string:membership_id>')
+@app.route('/pass/<string:membership_id>',methods=['GET', 'POST'])
 def show_pass(membership_id):
     try:
         member = db_session.query(Membership).filter_by(id=membership_id).first()
