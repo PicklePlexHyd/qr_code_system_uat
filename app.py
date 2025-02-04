@@ -223,8 +223,8 @@ def generate_membership():
             qr_code_path = os.path.join(qr_code_dir, qr_code_filename)
             os.makedirs(qr_code_dir, exist_ok=True)
 
-            #qr_link = f"{BASE_URL}/pass/{new_member.id}"
-            qr_link = f"pass/{new_member.id}"
+            qr_link = f"{BASE_URL}/pass/{new_member.id}"
+            #qr_link = f"pass/{new_member.id}"
             generate_qr(qr_link, qr_code_path)
 
             new_member.qr_code = qr_code_path
@@ -301,7 +301,7 @@ def admin_scan():
 
     return render_template("admin_scan.html", member=member)
 
-@app.route('/pass/<string:membership_id>',methods=['GET', 'POST'])
+@app.route('/{BASE_URL}/pass/<string:membership_id>',methods=['GET', 'POST'])
 def show_pass(membership_id):
     print(f"Accessing pass for Membership ID: {membership_id}")
     try:
