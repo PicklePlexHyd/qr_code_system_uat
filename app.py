@@ -41,7 +41,7 @@ scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 #creds = ServiceAccountCredentials.from_json_keyfile_name(GOOGLE_SHEET_CREDENTIALS, scope)
 #client = gspread.authorize(creds)
 
-GOOGLE_CREDENTIALS_JSON = os.getenv("GOOGLE_SHEET_CREDENTIALS_JSON")
+GOOGLE_CREDENTIALS_JSON = os.getenv("GOOGLE_SHEET_CREDENTIALS")
 
 if GOOGLE_CREDENTIALS_JSON:
     decoded_creds = base64.b64decode(GOOGLE_CREDENTIALS_JSON).decode("utf-8")
