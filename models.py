@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Date, ForeignKey, DateTime, crea
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+import os
 
 Base = declarative_base()
 
@@ -37,7 +38,10 @@ class ScanHistory(Base):
     membership = relationship('Membership', back_populates='scan_history')
 
 # Database Configuration
-DATABASE_URL = "sqlite:////Users/rajkumardandu/Downloads/qr_code_system/membership.db"
+DATABASE_URL = os.getenv('postgres://udg2iu0rm53646:p2df891ab9e37d847da9f3b95c8d328cfbecc5fc86d6beb903099ef71760080ea@c5p86clmevrg5s.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/dlofdva1s9g1l')
+
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # Initialize the database
 engine = create_engine(DATABASE_URL, echo=True)  # echo=True enables SQL logging for debugging

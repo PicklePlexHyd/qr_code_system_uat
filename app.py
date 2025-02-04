@@ -16,6 +16,8 @@ from flask import render_template, make_response
 from openpyxl import Workbook, load_workbook
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from models import Base, SessionLocal
+from sqlalchemy import create_engine
 
 
 app = Flask(__name__)
@@ -58,7 +60,9 @@ DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///membership.db')  # Use SQLit
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)  # Heroku fix
 
-SQLALCHEMY_DATABASE_URI = DATABASE_URL
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+
+
 
 
 #Adding Membership Data to Excel Sheet 
