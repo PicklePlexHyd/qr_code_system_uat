@@ -38,7 +38,7 @@ class ScanHistory(Base):
     membership = relationship('Membership', back_populates='scan_history')
 
 # Database Configuration
-DATABASE_URL = os.getenv('postgres://udg2iu0rm53646:p2df891ab9e37d847da9f3b95c8d328cfbecc5fc86d6beb903099ef71760080ea@c5p86clmevrg5s.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/dlofdva1s9g1l')
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
