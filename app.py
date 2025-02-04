@@ -32,7 +32,7 @@ ADMIN_PASSWORD = "PlexAdmin@123"
 EMAIL_ADDRESS = "pickleplexhyd@gmail.com"  # Update with your email
 EMAIL_PASSWORD = "enpt akwm mliz gfte"  # Use app password
 
-GOOGLE_SHEET_CREDENTIALS = "/Users/rajkumardandu/Downloads/pickleplex-449610-5b6f84d4afda.json"
+#GOOGLE_SHEET_CREDENTIALS = "/Users/rajkumardandu/Downloads/pickleplex-449610-5b6f84d4afda.json"
 
 # Google Sheets authentication
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -52,6 +52,8 @@ else:
 # Open the Google Sheet (replace with your sheet name)
 SHEET_NAME = "PicklePlex Data"
 spreadsheet = client.open(SHEET_NAME)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
 
 #Adding Membership Data to Excel Sheet 
