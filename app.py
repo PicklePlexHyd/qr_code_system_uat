@@ -224,7 +224,7 @@ def generate_membership():
             os.makedirs(qr_code_dir, exist_ok=True)
 
             #qr_link = f"{BASE_URL}/pass/{new_member.id}"
-            qr_link = f"/pass/{new_member.id}"
+            qr_link = f"pass/{new_member.id}"
             generate_qr(qr_link, qr_code_path)
 
             new_member.qr_code = qr_code_path
