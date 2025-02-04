@@ -16,7 +16,7 @@ from flask import render_template, make_response
 from openpyxl import Workbook, load_workbook
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from models import Base, SessionLocal
+
 from sqlalchemy import create_engine
 
 
