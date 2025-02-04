@@ -303,7 +303,7 @@ def admin_scan():
 
     return render_template("admin_scan.html", member=member)
 
-@app.route('/pass/<string:membership_id>',methods=['GET', 'POST'])
+@app.route('/pass/<string:membership_id>')
 def show_pass(membership_id):
     print(f"Accessing pass for Membership ID: {membership_id}")
     try:
